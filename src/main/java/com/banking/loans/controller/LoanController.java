@@ -4,6 +4,7 @@ package com.banking.loans.controller;
 import com.banking.loans.constants.LoanConstants;
 import com.banking.loans.dto.ErrorResponseDto;
 import com.banking.loans.dto.LoanDto;
+import com.banking.loans.dto.LoansContactInfoDto;
 import com.banking.loans.dto.ResponseDto;
 import com.banking.loans.service.ILoanService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,12 +15,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import lombok.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @Tag(
@@ -28,11 +37,21 @@ import lombok.*;
 )
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
 @Validated
 public class LoanController {
 
     private final ILoanService iLoanService;
+    private final LoansContactInfoDto loansContactInfoDto;
+    private final Environment environment;
+
+    @Value("${build.info}")
+    private String buildInfo;
+
+    public LoanController(ILoanService iLoanService, LoansContactInfoDto loansContactInfoDto, Environment environment) {
+        this.iLoanService = iLoanService;
+        this.loansContactInfoDto = loansContactInfoDto;
+        this.environment = environment;
+    }
 
     @Operation(
             summary = "Create Loan REST API",
@@ -160,6 +179,28 @@ public class LoanController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDto(LoanConstants.MESSAGE_417_DELETE, HttpStatus.EXPECTATION_FAILED));
         }
+    }
+
+
+    @Operation(summary = "Fetch Build Info Rest API")
+    @ApiResponse(responseCode = "200")
+    @GetMapping("/build-info")
+    public ResponseEntity<String> buildInfo(){
+        return ResponseEntity.status(HttpStatus.OK).body(buildInfo);
+    }
+
+    @Operation(summary = "Fetch Java Home Info  Rest API")
+    @ApiResponse(responseCode = "200")
+    @GetMapping("/java-info")
+    public ResponseEntity<String> javaInfo(){
+        return ResponseEntity.status(HttpStatus.OK).body(environment.getProperty("JAVA_HOME"));
+    }
+
+    @Operation(summary = "Fetch Contact Info Rest API")
+    @ApiResponse(responseCode = "200")
+    @GetMapping("/contact-info")
+    public ResponseEntity<LoansContactInfoDto> contactInfo(){
+        return ResponseEntity.status(HttpStatus.OK).body(loansContactInfoDto);
     }
 
 }
