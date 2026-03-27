@@ -4,8 +4,16 @@ server:
 spring:
   application:
     name: "loans"
+
   config:
     import: "optional:configserver:http://localhost:8071/"
+
+  rabbitmq:
+    host: "localhost"
+    port: 5672
+    username: "guest"
+    password: "guest"
+
   datasource:
     url: jdbc:h2:mem:loansdb
     driver-class-name: org.h2.Driver
@@ -24,4 +32,6 @@ management:
   endpoints:
     web:
       exposure:
-        include: "refresh"
+        include:
+        - "refresh"
+        - "busrefresh"
