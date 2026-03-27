@@ -2,6 +2,10 @@ server:
   port:
     8082
 spring:
+  application:
+    name: "loans"
+  config:
+    import: "optional:configserver:http://localhost:8071/"
   datasource:
     url: jdbc:h2:mem:loansdb
     driver-class-name: org.h2.Driver
@@ -15,18 +19,3 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-  config:
-    import:
-      - "application-qa.yml"
-      - "application-prod.yml"
-build:
-  info: "v1"
-loans:
-  message: "Welcome to loans APIs"
-  contactDetails:
-    name: "Jen Doe"
-    email: "jendoe@email.com"
-    role: "Business"
-  onCallSupport:
-    - (111) 12345-1262
-    - (222) 12345-1263
