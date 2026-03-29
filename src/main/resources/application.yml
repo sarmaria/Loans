@@ -33,3 +33,28 @@ management:
     web:
       exposure:
         include: "*"
+  # Eureka server will use this info actuator point to fetch the info detail of the service
+  info:
+    env:
+      enabled: true
+  # To expose shutdown endpoint only for demo purpose
+  endpoint:
+    shutdown:
+      access: unrestricted
+
+# To connect to eureka server
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: "http://localhost:8070/eureka/"
+    fetch-registry: true
+    register-with-eureka: true
+
+# Information used by info actuator point
+info:
+  app:
+    name: "loans"
+    description: "Banking loans application"
+    version: "1.0.0"
